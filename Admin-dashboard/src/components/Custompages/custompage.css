@@ -1,0 +1,63 @@
+
+.custom-page-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .custom-page-header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .custom-page-form input,
+  .custom-page-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .custom-page-form textarea {
+    height: 200px;
+  }
+  
+  .custom-page-form button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .custom-page-form button:disabled {
+    background-color: #ccc;
+  }
+  
+  .custom-page-form button:hover {
+    background-color: #218838;
+  }
+  
+  .custom-page-cancel-btn {
+    background-color: #dc3545;
+    margin-left: 10px;
+  }
+  
+  .custom-page-form button:disabled:hover {
+    background-color: #ccc;
+  }
+  
+  .message {
+    color: green;
+    margin-top: 10px;
+  }
+  
