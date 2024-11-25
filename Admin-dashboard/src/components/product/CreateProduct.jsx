@@ -51,7 +51,7 @@ const CreateProductPage = () => {
     }
 
     try {
-      const response = await fetch('https://glamgrabbackend-dxah8u9g.b4a.run/product/create', {
+      const response = await fetch('http://localhost:5000/product/create', {
         method: 'POST',
         body: data, 
       });
