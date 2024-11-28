@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
-const Product = require('../models/product'); // Your product model
-const upload = require('../config/multerConfig'); // Import multer config
+const mongoose = require('mongoose');
+const Product = require('../models/product'); // Your Product model
+const upload = require('../config/multerConfig'); // Multer configuration for file uploads
 
 // Helper function to save files locally
 const saveFileLocally = (filePath, destinationFolder, fileName) => {
@@ -14,7 +15,14 @@ const saveFileLocally = (filePath, destinationFolder, fileName) => {
   }
 
   fs.renameSync(filePath, destPath); // Move the file
-  return destPath; // Return the new file path
+  return `/images/${fileName}`; // Return the relative path for database storage
+};
+
+// Helper function to delete a file
+const deleteFile = (filePath) => {
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath); // Delete the file if it exists
+  }
 };
 
 // POST: Create a New Product
@@ -26,7 +34,7 @@ router.post(
   ]),
   async (req, res) => {
     try {
-      // Check if the main image is uploaded
+      // Ensure a main image is uploaded
       if (!req.files['imageUrl'] || req.files['imageUrl'].length === 0) {
         return res.status(400).json({ message: 'Main image file is required.' });
       }
@@ -43,7 +51,7 @@ router.post(
         `main_${Date.now()}_${mainImageFile.originalname}`
       );
 
-      // Save additional images locally if provided
+      // Save additional images locally, if provided
       const additionalImages = req.files['additionalImages']
         ? req.files['additionalImages'].map(file =>
             saveFileLocally(
@@ -104,9 +112,14 @@ router.put(
       product.price = price || product.price;
       product.description = description || product.description;
 
-      // Update the main image if provided
+      // Update the main image, if provided
       if (req.files['imageUrl'] && req.files['imageUrl'].length > 0) {
         const mainImageFile = req.files['imageUrl'][0];
+
+        // Delete the old main image
+        deleteFile(path.join(__dirname, '../', product.imageUrl));
+
+        // Save the new main image
         product.imageUrl = saveFileLocally(
           mainImageFile.path,
           imagesFolder,
@@ -114,8 +127,14 @@ router.put(
         );
       }
 
-      // Update additional images if provided
+      // Update additional images, if provided
       if (req.files['additionalImages']) {
+        // Delete old additional images
+        product.additionalImages.forEach(image =>
+          deleteFile(path.join(__dirname, '../', image))
+        );
+
+        // Save new additional images
         product.additionalImages = req.files['additionalImages'].map(file =>
           saveFileLocally(
             file.path,
@@ -134,7 +153,7 @@ router.put(
   }
 );
 
-// Get all products
+// GET: All Products
 router.get('/', async (req, res) => {
   try {
     const products = await Product.find();
@@ -145,7 +164,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get product count
+// GET: Product Count
 router.get('/count', async (req, res) => {
   try {
     const productCount = await Product.countDocuments();
@@ -155,7 +174,7 @@ router.get('/count', async (req, res) => {
   }
 });
 
-// Get product by ID
+// GET: Product by ID
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -177,14 +196,25 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Delete a product by ID
+// DELETE: Product by ID
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedProduct = await Product.findByIdAndDelete(id);
-    if (!deletedProduct) {
+
+    const product = await Product.findById(id);
+
+    if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+
+    // Delete associated images
+    deleteFile(path.join(__dirname, '../', product.imageUrl));
+    product.additionalImages.forEach(image =>
+      deleteFile(path.join(__dirname, '../', image))
+    );
+
+    await Product.findByIdAndDelete(id);
+
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting product', error });
