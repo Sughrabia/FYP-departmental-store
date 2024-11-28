@@ -10,7 +10,7 @@ const Product = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('https://glamgrabbackend-dxah8u9g.b4a.run/product');
+        const response = await fetch('https://ordermanagementserver1-a6huju4d.b4a.run/product');
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -24,7 +24,7 @@ const Product = () => {
   const handleDelete = async (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        const response = await fetch(`https://glamgrabbackend-dxah8u9g.b4a.run/product/${productId}`, {
+        const response = await fetch(`https://ordermanagementserver1-a6huju4d.b4a.run/product/${productId}`, {
           method: 'DELETE',
         });
         if (response.ok) {
@@ -68,7 +68,7 @@ const Product = () => {
                   <td>{indexOfFirstProduct + index + 1}</td>
                   <td>{product.name}</td>
                   <td>{product.category}</td>
-                  <td><img src={`https://glamgrabbackend-dxah8u9g.b4a.run/${product.imageUrl.replace(/\\/g, '/')}`}  alt={product.name} width="50" /></td>
+                  <td><img src={`https://ordermanagementserver1-a6huju4d.b4a.run/${product.imageUrl.replace(/\\/g, '/')}`}  alt={product.name} width="50" /></td>
                   <td>
                     <Link to={`/edit-product/${product._id}`}>
                       <button  className='edit-button'> Edit</button>
