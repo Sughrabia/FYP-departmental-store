@@ -9,7 +9,7 @@ const Adminnavbar = () => {
     // Fetch the title and logo from the backend API
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/setting/get'); // Adjust the URL as per your backend route
+        const response = await axios.get('https://glamgrabbackend-dxah8u9g.b4a.run/setting/get'); // Adjust the URL as per your backend route
         if (response.data) {
           setSettings({
             title: response.data.title,
@@ -32,7 +32,7 @@ const Adminnavbar = () => {
       </div>
 
       <div className="navbar-right">
-        <img src="profile-url" alt="Profile" className="navbar-profile" />
+        {/* <img src="profile-url" alt="Profile" className="navbar-profile" /> */}
       </div>
     </div>
   );

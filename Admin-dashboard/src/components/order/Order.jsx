@@ -11,7 +11,7 @@ const OrderHistory = () => {
   useEffect(() => {
     const fetchOrderHistory = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/order');
+        const response = await axios.get('https://glamgrabbackend-dxah8u9g.b4a.run/order');
         setOrders(response.data);
       } catch (error) {
         setError('Failed to fetch order history');
